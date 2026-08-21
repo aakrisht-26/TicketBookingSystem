@@ -17,6 +17,37 @@ cd ..
 pre-commit install
 ```
 
+## Running the backend
+
+```bash
+cd backend
+uvicorn --factory app.main:create_app --reload
+```
+
+`--factory` is not optional. `app/main.py` exposes `create_app` and no
+module-level application instance, so importing the module reads no
+environment and configures no logging. Every process builds its own
+application from the factory, which is also how the tests get an instance that
+cannot be contaminated by another test's configuration.
+
+Interactive API documentation is at `http://localhost:8000/api/docs`, and the
+schema the frontend client is generated from is at
+`http://localhost:8000/api/openapi.json`.
+
+## Database migrations
+
+```bash
+cd backend
+alembic upgrade head          # apply everything outstanding
+alembic downgrade base        # unwind to an empty database
+alembic upgrade head --sql    # print the SQL without connecting
+```
+
+Migrations run as a deploy-time command, never on application boot, so two
+booting instances cannot race each other. The connection URL comes from
+`app/settings.py` rather than from `alembic.ini`, so no connection string is
+ever committed.
+
 ## Checks
 
 Run from `backend/`. CI runs exactly these, so a clean local run is a green

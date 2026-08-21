@@ -1,0 +1,14 @@
+Alembic migration environment.
+
+Migrations run as a deploy-time command, never on application boot, so two
+booting instances cannot race each other. The connection URL comes from
+app.settings, not from alembic.ini, so a connection string is never committed.
+
+  alembic revision -m "description"     create a revision
+  alembic upgrade head                  apply everything outstanding
+  alembic downgrade base                unwind to an empty database
+  alembic upgrade head --sql            print the SQL without connecting
+
+Every revision must have a working downgrade. CI runs upgrade head, downgrade
+base and upgrade head again on every pull request, so a one-way migration is
+caught before it is merged rather than the first time it needs reverting.

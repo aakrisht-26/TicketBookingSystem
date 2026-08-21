@@ -16,7 +16,13 @@ step 1 onward.
 ## Status
 
 Step 0 of 21 complete: repository layout, tooling, continuous integration.
-There is no application yet.
+
+Step 1 is in progress and **not complete**. Landed: the application factory,
+settings, structured logging with correlation IDs, the error registry and its
+handlers, `GET /api/health`, and the Alembic environment. Blocked on
+credentials: the database connection, `GET /api/health/ready`, and the Render
+deployment. There is no hosted URL yet, and `docs/backlog.md` B4 tracks what
+remains.
 
 ## Stack
 
@@ -27,10 +33,12 @@ live seat updates. Deployed as a single Render web service.
 ## Layout
 
 ```
-backend/          FastAPI application and its tests
-docs/             Roadmap, data model, standards, compliance matrix, ADRs
-.github/          CI workflow and pull request template
-docker-compose.yml  Local Postgres, development only
+backend/app/          FastAPI application: factory, settings, errors, middleware
+backend/migrations/   Alembic environment; no revisions yet, step 2 adds them
+backend/tests/        pytest suite
+docs/                 Roadmap, data model, standards, compliance matrix, ADRs
+.github/              CI workflow and pull request template
+docker-compose.yml    Local Postgres, development only
 ```
 
 ## Documentation

@@ -8,14 +8,26 @@ version = "0.1.0"
 description = "Ticket booking system with seat holds, concurrency guarantees and a waitlist offer cascade."
 requires-python = ">=3.11,<3.12"
 license = "MIT"
-dependencies = []
+dependencies = [
+  "alembic==1.19.1",
+  "fastapi==0.141.1",
+  "pydantic==2.13.4",
+  "pydantic-settings==2.15.0",
+  "sqlalchemy==2.0.52",
+  "structlog==26.1.0",
+  "uvicorn[standard]==0.52.4",
+]
 
 [project.optional-dependencies]
 dev = [
+  "anyio==4.14.2",
+  "httpx2==2.12.0",
   "mypy==2.3.1",
   "pre-commit==4.6.2",
   "pytest==9.1.1",
+  "pyyaml==6.0.3",
   "ruff==0.16.4",
+  "types-pyyaml==6.0.12.20260815",
 ]
 
 [tool.hatch.build.targets.wheel]
@@ -72,7 +84,7 @@ line-ending = "lf"
 # ---------------------------------------------------------------------------
 [tool.mypy]
 python_version = "3.11"
-files = ["app", "tests"]
+files = ["app", "migrations", "tests"]
 strict = true
 warn_unreachable = true
 enable_error_code = [
@@ -88,3 +100,7 @@ enable_error_code = [
 testpaths = ["tests"]
 addopts = "-ra --strict-markers --strict-config"
 xfail_strict = true
+# A DeprecationWarning is how a dependency tells you the build is about to
+# break. Failing on it turns that into a red pull request rather than a
+# surprise on an upgrade months later.
+filterwarnings = ["error"]
