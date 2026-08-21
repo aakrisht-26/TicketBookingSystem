@@ -1,5 +1,7 @@
 """Ticket booking system backend package."""
 
+import os
+
 from importlib.metadata import version
 
 __version__ = version("ticket-booking-system")
