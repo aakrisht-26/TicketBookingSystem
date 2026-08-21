@@ -1,0 +1,25 @@
+# Local Postgres only. This file is not a production topology and does not
+# extend to one: production is a single Render web service against Neon.
+# See docs/STANDARDS.md, "Infrastructure decisions, deliberately".
+services:
+  postgres:
+    # Pinned to match the Postgres major version used on Neon in production,
+    # because the guarantees this system relies on are Postgres-specific.
+    image: postgres:17-alpine
+    container_name: tbs-postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-tbs}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-tbs}
+      POSTGRES_DB: ${POSTGRES_DB:-tbs}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-tbs} -d ${POSTGRES_DB:-tbs}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  postgres-data:
