@@ -1,0 +1,13 @@
+# Normalise to LF in the repository and in the working copy on every platform.
+# ruff is configured with line-ending = "lf", so a CRLF checkout on Windows
+# would fail `ruff format --check` locally while CI stayed green.
+* text=auto eol=lf
+
+# Binary assets: never touch.
+*.png binary
+*.jpg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.woff binary
+*.woff2 binary

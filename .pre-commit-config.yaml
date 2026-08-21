@@ -1,0 +1,39 @@
+# Local hooks. CI re-runs the same checks independently, so a bypassed hook is
+# caught at the pull request rather than merged.
+#
+# Install once, from the backend virtualenv:  pre-commit install
+default_install_hook_types: [pre-commit]
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-toml
+      - id: check-added-large-files
+      - id: check-merge-conflict
+      - id: detect-private-key
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.16.4
+    hooks:
+      - id: ruff-check
+        args: [--fix]
+        files: ^backend/
+      - id: ruff-format
+        files: ^backend/
+
+  # mypy runs from the developer's backend virtualenv rather than an isolated
+  # pre-commit environment, so it type-checks against the real installed
+  # dependencies instead of a copy that drifts from them.
+  - repo: local
+    hooks:
+      - id: mypy
+        name: mypy --strict (backend)
+        entry: mypy --config-file backend/pyproject.toml backend/app backend/tests
+        language: system
+        types: [python]
+        files: ^backend/
+        pass_filenames: false
