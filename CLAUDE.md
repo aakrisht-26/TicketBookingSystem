@@ -43,7 +43,7 @@ Applies to every step without exception.
 
 ## Stack
 
-FastAPI, SQLAlchemy 2.x, Alembic, Python 3.11. PostgreSQL on Neon in production, `docker compose` locally. React, Vite, TypeScript strict, Tailwind, TanStack Query. SSE for real-time. JWT access plus revocable refresh. pytest and httpx against real Postgres. Playwright plus `axe` for e2e. ruff, mypy strict, tsc strict. GitHub Actions. Single Render web service serving the built Vite bundle.
+FastAPI, SQLAlchemy 2.x, Alembic, Python 3.11. PostgreSQL on Neon in production, `docker compose` locally. React, Vite, TypeScript strict, Tailwind, TanStack Query. SSE for real-time. JWT access plus revocable refresh. pytest and httpx2 against real Postgres. Playwright plus `axe` for e2e. ruff, mypy strict, tsc strict. GitHub Actions. Single Render web service serving the built Vite bundle.
 
 **Neon:** use the pooled connection string with `pool_pre_ping=True` and a modest `pool_recycle`. Neon closes idle connections aggressively and the app will throw stale-connection errors without this.
 
