@@ -8,9 +8,21 @@ Format and rationale: [ADR 0001](0001-record-architecture-decisions.md).
 |---|---|---|---|
 | [0001](0001-record-architecture-decisions.md) | Record architecture decisions | accepted | 0 |
 | [0002](0002-no-api-version-prefix.md) | No version prefix on the API path | accepted | 1 |
+| [0003](0003-no-redis.md) | No Redis, no Celery, no message broker | accepted | 1 |
 | [0004](0004-pure-asgi-middleware.md) | Middleware is written against raw ASGI | accepted | 1 |
+| [0005](0005-derived-seat-status.md) | Seat status is derived, not stored | accepted | 1 |
+| [0006](0006-sse-fanout.md) | Server-sent event fan-out is in-process | accepted | 1 |
+| [0007](0007-database-hosting.md) | Neon over Render Postgres and Supabase | accepted | 1 |
+| [0008](0008-read-committed-with-row-locks.md) | READ COMMITTED with explicit row locks, not SERIALIZABLE | accepted | 1 |
 
-Records known to be coming, named here so the numbering is not a surprise:
-`0003-no-redis.md`, `0006-sse-fanout.md`, `0007-database-hosting.md`. Their
-reasoning is summarised in `docs/STANDARDS.md` until each record lands with the
-step that makes the decision real.
+Records 0003 and 0005 to 0008 were written before the code they govern. They
+document decisions already taken in `CLAUDE.md`, `docs/STANDARDS.md` and
+`docs/DATA-MODEL.md`, so that the reasoning exists at the point the
+implementation starts rather than being reconstructed afterwards. The steps
+that implement them are named in each record.
+
+`docs/DATA-MODEL.md` refers to the derived seat status record as
+`0002-derived-seat-status.md`. That number was allocated to the API versioning
+record first, and records are never renumbered, so the decision lives at
+[0005](0005-derived-seat-status.md) and the reference in `docs/DATA-MODEL.md`
+is stale.
