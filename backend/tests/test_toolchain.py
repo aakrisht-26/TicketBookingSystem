@@ -6,6 +6,7 @@ the Python version the project commits to, and the pre-commit hooks type-check
 against the same dependencies as everything else.
 """
 
+import re
 import sys
 import tomllib
 from pathlib import Path
@@ -40,8 +41,12 @@ def test_runs_on_python_311() -> None:
 
 
 def _requirement_name(requirement: str) -> str:
-    """``uvicorn[standard]==0.52.4`` -> ``uvicorn``."""
-    return requirement.split("==")[0].split("[")[0]
+    """``uvicorn[standard]==0.52.4`` -> ``uvicorn``, ``httpx2>=2.11.0`` -> ``httpx2``.
+
+    Splits on any version operator, not just ``==``, so a requirement expressed
+    as a floor rather than an exact pin still resolves to its name.
+    """
+    return re.split(r"[<>=!~]", requirement, maxsplit=1)[0].split("[")[0]
 
 
 def _mypy_hook() -> dict[str, Any]:

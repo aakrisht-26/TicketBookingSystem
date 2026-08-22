@@ -21,7 +21,9 @@ dependencies = [
 [project.optional-dependencies]
 dev = [
   "anyio==4.14.2",
-  "httpx2==2.12.0",
+  # Floor, not an exact pin: 2.1.0 and 2.2.0 carry a known high-severity
+  # vulnerability, so anything below 2.11.0 must never be resolved.
+  "httpx2>=2.11.0",
   "mypy==2.3.1",
   "pre-commit==4.6.2",
   "pytest==9.1.1",
