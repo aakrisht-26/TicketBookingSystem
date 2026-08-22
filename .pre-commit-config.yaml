@@ -25,15 +25,31 @@ repos:
       - id: ruff-format
         files: ^backend/
 
-  # mypy runs from the developer's backend virtualenv rather than an isolated
-  # pre-commit environment, so it type-checks against the real installed
-  # dependencies instead of a copy that drifts from them.
-  - repo: local
+  # mypy needs the project's dependencies to say anything useful, so the hook
+  # declares them. The environment is isolated and reproducible, which a
+  # `language: system` hook is not: that one silently resolves whichever mypy is
+  # first on PATH, and a global install without these dependencies reports
+  # dozens of import errors that look like real findings.
+  #
+  # The duplication is the cost, and it is guarded rather than trusted:
+  # tests/test_toolchain.py::test_precommit_mypy_dependencies_match_pyproject
+  # fails if this list and backend/pyproject.toml ever disagree.
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v2.3.1
     hooks:
       - id: mypy
         name: mypy --strict (backend)
-        entry: mypy --config-file backend/pyproject.toml backend/app backend/tests
-        language: system
-        types: [python]
+        args: [--config-file, backend/pyproject.toml, backend/app, backend/migrations, backend/tests]
         files: ^backend/
         pass_filenames: false
+        additional_dependencies:
+          - alembic==1.19.1
+          - fastapi==0.141.1
+          - httpx2==2.12.0
+          - pydantic==2.13.4
+          - pydantic-settings==2.15.0
+          - pytest==9.1.1
+          - sqlalchemy==2.0.52
+          - structlog==26.1.0
+          - types-pyyaml==6.0.12.20260815
+          - uvicorn[standard]==0.52.4
