@@ -48,6 +48,11 @@ booting instances cannot race each other. The connection URL comes from
 `app/settings.py` rather than from `alembic.ini`, so no connection string is
 ever committed.
 
+Every revision needs a downgrade that works. CI runs upgrade, downgrade and
+upgrade again on each pull request against a throwaway PostgreSQL, so a one-way
+migration is caught there rather than the first time production needs
+reverting.
+
 ## Checks
 
 Run from `backend/`. CI runs exactly these, so a clean local run is a green
@@ -59,6 +64,36 @@ ruff format --check .
 mypy
 pytest -q
 ```
+
+The test suite needs a real PostgreSQL. It reads `TEST_DATABASE_URL`, falling
+back to `DATABASE_URL`, and **fails rather than skipping** when neither is set.
+That is deliberate: `CLAUDE.md` forbids marking a step done with a skipped
+test, and a database suite that quietly skips itself is that failure wearing a
+green tick. Set `TEST_DATABASE_URL` when you want tests kept away from the
+database the application is using; the migration round trip in CI runs
+`downgrade base`, which on a database with real schema drops all of it.
+
+Never point tests at SQLite. The guarantees this system makes are
+Postgres-specific and a green suite on SQLite would prove nothing.
+
+### On Windows
+
+psycopg's async mode cannot run on the `ProactorEventLoop` that Windows
+selects by default, and raises an `InterfaceError` saying so. The test suite
+sets the selector policy for itself, so `pytest` needs nothing.
+
+Running the server does. Setting the event loop policy is **not** enough:
+uvicorn builds its loop from a factory that returns `ProactorEventLoop` on
+Windows directly, ignoring the policy. Start the server on an explicit loop
+instead, from `backend/`:
+
+```bash
+python -c "import asyncio, uvicorn; s = uvicorn.Server(uvicorn.Config('app.main:create_app', factory=True, reload=True)); loop = asyncio.SelectorEventLoop(); asyncio.set_event_loop(loop); loop.run_until_complete(s.serve())"
+```
+
+Linux and macOS need none of this, and neither do CI or production, which is
+why no part of it lives in `backend/app/`. See
+[`docs/adr/0009-database-driver-and-pooling.md`](docs/adr/0009-database-driver-and-pooling.md).
 
 `pre-commit run --all-files` runs the same lint, format and type checks across
 the repository, plus the file hygiene hooks.

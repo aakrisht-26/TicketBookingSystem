@@ -29,6 +29,7 @@ from starlette.status import (
     HTTP_405_METHOD_NOT_ALLOWED,
     HTTP_422_UNPROCESSABLE_CONTENT,
     HTTP_500_INTERNAL_SERVER_ERROR,
+    HTTP_503_SERVICE_UNAVAILABLE,
 )
 
 from app.request_context import REQUEST_ID_HEADER, current_request_id
@@ -43,6 +44,7 @@ class ErrorCode(StrEnum):
     and is never removed while any client might still switch on it.
     """
 
+    DATABASE_UNAVAILABLE = "DATABASE_UNAVAILABLE"
     INTERNAL_ERROR = "INTERNAL_ERROR"
     METHOD_NOT_ALLOWED = "METHOD_NOT_ALLOWED"
     NOT_FOUND = "NOT_FOUND"
@@ -58,6 +60,10 @@ class ErrorSpec:
 
 
 ERROR_REGISTRY: Final[dict[ErrorCode, ErrorSpec]] = {
+    ErrorCode.DATABASE_UNAVAILABLE: ErrorSpec(
+        status_code=HTTP_503_SERVICE_UNAVAILABLE,
+        message="The service is not ready. The database could not be reached.",
+    ),
     ErrorCode.INTERNAL_ERROR: ErrorSpec(
         status_code=HTTP_500_INTERNAL_SERVER_ERROR,
         message="An unexpected error occurred. Quote the request id when reporting it.",

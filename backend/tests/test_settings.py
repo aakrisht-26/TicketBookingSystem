@@ -54,3 +54,48 @@ def test_settings_are_frozen() -> None:
 
     with pytest.raises(ValidationError):
         settings.log_level = "DEBUG"
+
+
+@pytest.mark.parametrize(
+    ("given", "expected"),
+    [
+        (
+            "postgresql://u:p@host/db",
+            "postgresql+psycopg://u:p@host/db",
+        ),
+        (
+            "postgres://u:p@host/db",
+            "postgresql+psycopg://u:p@host/db",
+        ),
+        (
+            "postgresql+psycopg://u:p@host/db",
+            "postgresql+psycopg://u:p@host/db",
+        ),
+    ],
+)
+def test_a_provider_issued_url_is_normalised_onto_the_async_driver(
+    given: str,
+    expected: str,
+) -> None:
+    """Neon and Render hand out `postgresql://`, which SQLAlchemy reads as psycopg2.
+
+    Rewriting it here means the operator pastes the string their provider gave
+    them, rather than editing it correctly or discovering the mistake on deploy.
+    """
+    assert build_settings(database_url=given).database_url == expected
+
+
+def test_an_explicit_driver_is_left_alone() -> None:
+    """An unsupported driver should fail loudly, not be silently rewritten."""
+    settings = build_settings(database_url="postgresql+asyncpg://u:p@host/db")
+
+    assert settings.database_url == "postgresql+asyncpg://u:p@host/db"
+
+
+def test_query_parameters_survive_normalisation() -> None:
+    """Neon's URL carries sslmode and channel_binding, and both matter."""
+    settings = build_settings(
+        database_url="postgresql://u:p@host/db?sslmode=require&channel_binding=require"
+    )
+
+    assert settings.database_url.endswith("?sslmode=require&channel_binding=require")
