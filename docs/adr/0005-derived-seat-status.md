@@ -125,11 +125,3 @@ There is a deviation from the brief's literal wording, and it is a deliberate
 one. It is stated in one sentence in the design write-up and it is not
 buried, because a reviewer checking the schema against the brief needs to see
 that the deviation was reasoned rather than missed.
-
-## A note on this record's number
-
-`docs/DATA-MODEL.md` refers to this decision as `0002-derived-seat-status.md`.
-By the time it was written, 0002 had already been taken by
-`0002-no-api-version-prefix.md`, which `CLAUDE.md` asked for during step 0.
-Records are never renumbered once allocated, so this one is 0005. The reference
-in `docs/DATA-MODEL.md` is stale and points at the wrong record.

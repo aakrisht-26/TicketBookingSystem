@@ -59,7 +59,7 @@ SELECT ss.id AS show_seat_id, ss.show_id, ss.seat_id, ss.category_id, ss.price_c
 FROM show_seats ss;
 ```
 
-Per-seat status is then queryable per show in one statement with zero divergence risk, because it is computed at query time rather than cached. Write `docs/adr/0002-derived-seat-status.md`, and say so in one sentence in the design write-up. Do not skip that sentence: a reviewer checking the brief against the schema needs to see the deviation was reasoned, not missed.
+Per-seat status is then queryable per show in one statement with zero divergence risk, because it is computed at query time rather than cached. Write `docs/adr/0005-derived-seat-status.md`, and say so in one sentence in the design write-up. Do not skip that sentence: a reviewer checking the brief against the schema needs to see the deviation was reasoned, not missed.
 
 **Status vocabulary at the API boundary.** The brief names three statuses. Return exactly `available`, `held`, `booked` to customers. An `offered` seat is reported as `held` to everyone except the offeree, who sees a dedicated field on their own offer view. The richer internal model stays internal.
 

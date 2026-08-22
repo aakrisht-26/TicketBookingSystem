@@ -20,9 +20,3 @@ document decisions already taken in `CLAUDE.md`, `docs/STANDARDS.md` and
 `docs/DATA-MODEL.md`, so that the reasoning exists at the point the
 implementation starts rather than being reconstructed afterwards. The steps
 that implement them are named in each record.
-
-`docs/DATA-MODEL.md` refers to the derived seat status record as
-`0002-derived-seat-status.md`. That number was allocated to the API versioning
-record first, and records are never renumbered, so the decision lives at
-[0005](0005-derived-seat-status.md) and the reference in `docs/DATA-MODEL.md`
-is stale.
