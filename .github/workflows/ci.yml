@@ -19,6 +19,30 @@ jobs:
     defaults:
       run:
         working-directory: backend
+
+    services:
+      # Major version matches the Neon instance this deploys against, because
+      # the guarantees in docs/DATA-MODEL.md are Postgres-specific and testing
+      # them on a different major proves less than it appears to.
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_USER: tbs
+          POSTGRES_PASSWORD: tbs
+          POSTGRES_DB: tbs_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U tbs -d tbs_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      # Nothing here is a secret. CI never touches the production database:
+      # a workflow that could reach it could also be made to drop it.
+      DATABASE_URL: postgresql://tbs:tbs@localhost:5432/tbs_test
+
     steps:
       - uses: actions/checkout@v5
 
@@ -39,6 +63,17 @@ jobs:
 
       - name: mypy --strict
         run: mypy
+
+      # Every revision needs a downgrade that works. Running the round trip on
+      # each pull request catches a one-way migration here rather than the
+      # first time production needs reverting.
+      - name: Migrations upgrade, downgrade, upgrade
+        run: |
+          alembic upgrade head
+          alembic current
+          alembic downgrade base
+          alembic upgrade head
+          alembic current
 
       - name: pytest
         run: pytest -q

@@ -19,10 +19,9 @@ Step 0 of 21 complete: repository layout, tooling, continuous integration.
 
 Step 1 is in progress and **not complete**. Landed: the application factory,
 settings, structured logging with correlation IDs, the error registry and its
-handlers, `GET /api/health`, and the Alembic environment. Blocked on
-credentials: the database connection, `GET /api/health/ready`, and the Render
-deployment. There is no hosted URL yet, and `docs/backlog.md` B4 tracks what
-remains.
+handlers, `GET /api/health`, `GET /api/health/ready`, the SQLAlchemy engine
+against Neon, and the baseline migration. What remains is the Render
+deployment, so there is no hosted URL yet. `docs/backlog.md` B4 tracks it.
 
 ## Stack
 
@@ -34,7 +33,7 @@ live seat updates. Deployed as a single Render web service.
 
 ```
 backend/app/          FastAPI application: factory, settings, errors, middleware
-backend/migrations/   Alembic environment; no revisions yet, step 2 adds them
+backend/migrations/   Alembic environment and the baseline revision
 backend/tests/        pytest suite
 docs/                 Roadmap, data model, standards, compliance matrix, ADRs
 .github/              CI workflow and pull request template

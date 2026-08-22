@@ -84,11 +84,6 @@ def test_the_access_log_reports_the_status_a_client_saw(
     assert completed[0]["path"] == "/api/does-not-exist"
 
 
-@pytest.fixture
-def anyio_backend() -> str:
-    return "asyncio"
-
-
 @pytest.mark.anyio
 async def test_concurrent_requests_never_share_a_correlation_id(
     app: FastAPI,

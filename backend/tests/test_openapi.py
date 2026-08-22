@@ -31,6 +31,7 @@ def test_error_codes_are_enumerated_for_clients(app: FastAPI) -> None:
     components = _schema(app)["components"]["schemas"]
 
     assert set(components["ErrorCode"]["enum"]) == {
+        "DATABASE_UNAVAILABLE",
         "INTERNAL_ERROR",
         "METHOD_NOT_ALLOWED",
         "NOT_FOUND",

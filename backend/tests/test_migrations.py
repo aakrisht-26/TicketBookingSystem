@@ -10,6 +10,9 @@ import subprocess
 import sys
 from pathlib import Path
 
+from alembic.config import Config
+from alembic.script import ScriptDirectory
+
 from app.settings import Settings
 
 BACKEND_ROOT = Path(__file__).resolve().parents[1]
@@ -27,11 +30,32 @@ def test_no_connection_string_is_committed() -> None:
     assert not any(line.startswith("sqlalchemy.url") for line in active)
 
 
-def test_there_are_no_revisions_yet() -> None:
-    """Step 2 owns the schema. A revision appearing here early is a scope leak."""
-    revisions = sorted(path.name for path in VERSIONS.glob("*.py"))
+def test_there_is_exactly_one_head() -> None:
+    """Two heads mean two people branched the schema and neither noticed.
 
-    assert revisions == []
+    Alembic will refuse to upgrade, but only at deploy time. This fails in the
+    pull request instead.
+    """
+    script = ScriptDirectory.from_config(Config(str(ALEMBIC_INI)))
+
+    assert len(script.get_heads()) == 1
+
+
+def test_the_baseline_is_the_root_of_the_chain() -> None:
+    """`downgrade base` has to have somewhere to land."""
+    script = ScriptDirectory.from_config(Config(str(ALEMBIC_INI)))
+    roots = [revision for revision in script.walk_revisions() if revision.down_revision is None]
+
+    assert len(roots) == 1
+    assert roots[0].doc.startswith("Baseline")
+
+
+def test_the_baseline_creates_no_schema() -> None:
+    """Step 2 owns every table. A baseline that anticipates it is a scope leak."""
+    baseline = next(VERSIONS.glob("*_baseline.py")).read_text(encoding="utf-8")
+
+    for ddl in ("op.create_table", "op.create_index", "op.execute", "op.add_column"):
+        assert ddl not in baseline
 
 
 def test_offline_mode_resolves_the_url_from_settings(settings: Settings) -> None:

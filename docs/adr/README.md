@@ -14,6 +14,7 @@ Format and rationale: [ADR 0001](0001-record-architecture-decisions.md).
 | [0006](0006-sse-fanout.md) | Server-sent event fan-out is in-process | accepted | 1 |
 | [0007](0007-database-hosting.md) | Neon over Render Postgres and Supabase | accepted | 1 |
 | [0008](0008-read-committed-with-row-locks.md) | READ COMMITTED with explicit row locks, not SERIALIZABLE | accepted | 1 |
+| [0009](0009-database-driver-and-pooling.md) | psycopg 3 as the only driver, with a small fixed pool | accepted | 1 |
 
 Records 0003 and 0005 to 0008 were written before the code they govern. They
 document decisions already taken in `CLAUDE.md`, `docs/STANDARDS.md` and

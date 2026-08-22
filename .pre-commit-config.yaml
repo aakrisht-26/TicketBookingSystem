@@ -47,6 +47,7 @@ repos:
           - fastapi==0.141.1
           - httpx2>=2.11.0
           - pydantic==2.13.4
+          - psycopg[binary]==3.3.4
           - pydantic-settings==2.15.0
           - pytest==9.1.1
           - sqlalchemy==2.0.52
